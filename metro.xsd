@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Élément racine xsd:schema avec la déclaration de l'espace de noms des schémas associé au préfixe xsd -->
+<!-- Un schéma est, en effet, un document XML à part entière avec un élément racine xsd:schema et un espace de noms. -->
+<!-- L'espace de noms des schémas XML est identifié par l'URI http://www.w3.org/2001/XMLSchema. Il est généralement associé au préfixe xsd ou à xs -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  
+  <!-- Documentation du schéma -->
+  <xsd:annotation> <!-- L'élément xsd:annotation permet d'ajouter des commentaires dans un schéma -->
+    <xsd:documentation xml:lang="fr">
+      Projet de XML : Cartes des lignes du métro : Schéma XML pour metro.xml
+    </xsd:documentation>
+  </xsd:annotation>
+  
+  <!-- 
+  Déclarations d'éléments, d'attributs et définitions de types 
+  xsd:simpleType :  définissent uniquement des contenus textuels
+  xsd:complexType : définissent des contenus purs (constitués uniquement d'éléments), des contenus textuels ou des contenus mixtes. 
+  -->
+  
+  <!-- Déclaration de l'attribut global id -->
+  <xsd:attribute name="id"  type="xsd:ID" />
+  
+  <!-- Déclarations globale des éléments nom, adress, latitude, longitude  -->
+  <xsd:element name="nom"     type="xsd:string"/>
+  <xsd:element name="adresse"    type="xsd:string"/>
+  <xsd:element name="latitude"      type="xsd:decimal"/> <!-- Nombre décimal sans limite de précision -->
+  <xsd:element name="longitude" type="xsd:decimal"/> <!-- Nombre décimal sans limite de précision -->
+  
+  <!-- Type global et simple Numero pour l'element numero -->
+  <xsd:simpleType name="Numero">
+    <xsd:restriction base="xsd:string">
+      <xsd:minLength value="1" />
+      <xsd:maxLength value="2"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  
+  <!-- Déclaration de l'élément ratp avec le type Ratp -->
+  <xsd:element name="ratp" type="Ratp">    										
+  	<!--<xsd:keyref name="ref-station" refer="unicite-station"> 
+      		<xsd:selector xpath="services/service/trajet/station"/>
+      		<xsd:field    xpath="@ref-id"/>
+    	</xsd:keyref> -->
+  </xsd:element>
+
+  <xsd:complexType name="Ratp"> <!-- Début de la définition du type Ratp -->
+    <xsd:sequence> <!-- L'opérateur xsd:sequence définit un nouveau type formé d'une suite des éléments énumérés -->
+      <!-- Déclaration de l'élément stations dans le contenu du type Ratp -->
+      <xsd:element name="stations"> <!-- La valeur par défaut des attributs minOccurs et maxOccurs est la valeur 1. -->
+        <xsd:complexType>
+        
+          <xsd:sequence> <!--Liste de toutes les stations de métro-->
+		  	<xsd:element name="station" maxOccurs="unbounded">
+      			<xsd:complexType>
+      				<xsd:all> <!-- Chacun des éléments doit apparaître une fois dans un ordre quelconque -->
+            			<xsd:element ref="nom"       /> <!-- Référence à un élément global -->
+            			<xsd:element ref="adresse"   /> <!-- Référence à un élément global -->
+            			<xsd:element ref="latitude"  /> <!-- Référence à un élément global -->
+            			<xsd:element ref="longitude" /> <!-- Référence à un élément global -->
+          			</xsd:all>
+          			
+          			<!-- Ajout de l'attribut id -->
+          			<xsd:attribute ref="id" use="required"/>
+      			</xsd:complexType>
+    		</xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+        <!-- Aucun partage d’identifiant entre deux stations distinctes -->
+        <xsd:key name="unicite-station"> 
+      		<xsd:selector xpath="station"/>
+      		<xsd:field    xpath="@id"/>
+  	   	</xsd:key>
+  	   	<!-- Aucun partage de nom entre deux stations distinctes -->
+  	   	<xsd:key name="unicite-station2"> 
+      		<xsd:selector xpath="station"/>
+      		<xsd:field    xpath="nom"/>
+  	   	</xsd:key> 
+  	   	<!-- Aucun partage d’adresse entre deux stations distinctes -->
+  	   	<!-- <xsd:key name="unicite-station3"> 
+      		<xsd:selector xpath="station"/>
+      		<xsd:field    xpath="adresse"/>
+  	   	</xsd:key> -->
+  	   	<!-- Aucun partage d’emplacement (couple formé par la latitude et la longitude) entre deux stations distinctes -->
+  	   	<!-- <xsd:key name="unicite-station4"> 
+      		<xsd:selector xpath="station"/>
+      		<xsd:field    xpath="latitude"/>
+      		<xsd:field    xpath="longitude"/> 
+  	   	</xsd:key>  -->
+      </xsd:element>
+      
+      <!-- Déclaration de l'élément services dans le contenu du type Ratp -->
+      <xsd:element name="services"> <!-- La valeur par défaut des attributs minOccurs et maxOccurs est la valeur 1. -->
+        <xsd:complexType>
+        
+          <xsd:sequence>
+		  	<xsd:element name="service" maxOccurs="unbounded">
+      			<xsd:complexType>
+      				<xsd:sequence>
+            			<xsd:element name="numero"     type="Numero"/>
+            			<xsd:sequence  maxOccurs="unbounded">
+            				<xsd:element name="trajet">
+      							<xsd:complexType>
+      								<xsd:sequence>
+            							<xsd:element name="station" minOccurs="0" maxOccurs="unbounded">
+            							    <xsd:complexType>
+        										<xsd:attribute name="ref-id" type="xsd:IDREF" use="required" />
+        										<xsd:attribute name="arret" type="xsd:positiveInteger" use="required" />
+    										</xsd:complexType>
+            							</xsd:element>
+          							</xsd:sequence>
+          			
+          							<xsd:attribute ref="id"  use="required"/>
+          							<xsd:attribute name="direction"  type="xsd:boolean" use="required"/>
+      							</xsd:complexType>
+    						</xsd:element>
+            				<xsd:element name="trajet">
+      							<xsd:complexType>
+      								<xsd:sequence>
+            							<xsd:element name="station" minOccurs="0" maxOccurs="unbounded">
+            							    <xsd:complexType> <!-- Si un type complexe déclare uniquement des attributs, le contenu de l'élément doit être vide -->
+        										<xsd:attribute name="ref-id" type="xsd:IDREF" use="required" />
+        										<xsd:attribute name="arret" type="xsd:positiveInteger" use="required" />
+    										</xsd:complexType>
+            							</xsd:element>
+          							</xsd:sequence>
+          			
+          							<xsd:attribute ref="id" use="required"/>
+          							<xsd:attribute name="direction"  type="xsd:boolean" use="required"/>
+      							</xsd:complexType>
+    						</xsd:element>
+    					</xsd:sequence>
+          			</xsd:sequence>
+          			
+          			<!-- Ajout de l'attribut id -->
+          			<xsd:attribute ref="id" use="required"/>
+      			</xsd:complexType>
+    		</xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+        <xsd:key name="unicite-service1"> <!-- Aucun partage d’identifiant entre deux lignes de métro distinctes -->
+      		<xsd:selector xpath="service"/>
+      		<xsd:field    xpath="@id"/>
+  	   </xsd:key>
+  	   <xsd:key name="unicite-service2"> <!-- Aucun partage de numéro entre deux lignes de métro distinctes -->
+      		<xsd:selector xpath="service"/>
+      		<xsd:field    xpath="numero"/>
+  	   </xsd:key>
+  	   <xsd:key name="unicite-trajet"> <!-- Unicité des attributs id des éléments trajet dans services -->
+      		<xsd:selector xpath="trajet"/>
+      		<xsd:field    xpath="@id"/>
+  	   </xsd:key>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

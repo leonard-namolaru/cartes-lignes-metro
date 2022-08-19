@@ -1,0 +1,37 @@
+<!-- A ajouter au document xml : <!DOCTYPE ratp SYSTEM "metro.dtd"> -->
+ 
+<!-- Déclaration de l'élément ratp devant contenir un element stations et un element services -->
+<!ELEMENT ratp (stations, services)> 
+
+<!-- Déclaration de l'élément stations devant contenir une suite non vide d'éléments station -->
+<!ELEMENT stations (station)+>
+
+<!-- Déclaration de l'élément station devant contenir les éléments nom, adresse, latitude, longitude -->
+<!-- Les schémas autorisent des facilités impossibles avec les DTD. 
+     La première est la possibilité d'avoir plusieurs éléments locaux avec des noms identiques mais avec des types et donc des contenus différents. 
+     Dans une DTD, un élément a une seule déclaration qui décrit ses contenus possibles pour toutes ses occurrences dans un document. -->
+<!ELEMENT station (nom, adresse, latitude, longitude)?> <!-- ? : 0 ou 1 occurrence -->
+<!ATTLIST station id ID #IMPLIED> <!-- #IMPLIED : L'attribut est optionnel et il n'a pas de valeur par défaut. Si l'attribut est absent, il n'a pas de valeur -->
+<!ATTLIST station ref-id IDREF #IMPLIED>
+<!ATTLIST station arret  CDATA #IMPLIED> 
+
+<!-- Les éléments nom, adresse, latitude, longitude -->
+<!ELEMENT nom       (#PCDATA)> <!-- Cet élément ne peut contenir que du texte (Parsed Characters DATA) et pas d'autre élément -->
+<!ELEMENT adresse   (#PCDATA)> <!-- Cet élément ne peut contenir que du texte (Parsed Characters DATA) et pas d'autre élément -->
+<!ELEMENT latitude  (#PCDATA)> <!-- Cet élément ne peut contenir que du texte (Parsed Characters DATA) et pas d'autre élément -->
+<!ELEMENT longitude (#PCDATA)> <!-- Cet élément ne peut contenir que du texte (Parsed Characters DATA) et pas d'autre élément -->
+
+<!-- Déclaration de l'élément services devant contenir une suite non vide d'éléments service -->
+<!ELEMENT services (service)+> <!-- + : Répétition d'un nombre non nul d'occurrences -->
+
+<!-- Déclaration de l'élément service devant contenir un élément numero et une suite non vide d'éléments trajet -->
+<!ELEMENT service (numero, (trajet)+)> <!-- + : Répétition d'un nombre non nul d'occurrences -->
+<!ATTLIST service id ID #REQUIRED> <!-- #REQUIRED : L'attribut est obligatoire et il n'a pas de valeur par défaut. -->
+
+<!-- Déclaration de l'élément numero -->
+<!ELEMENT numero (#PCDATA)> <!-- Cet élément ne peut contenir que du texte (Parsed Characters DATA) et pas d'autre élément -->
+
+<!-- Déclaration de l'élément trajet devant contenir un nombre quelconque d'éléments station -->
+<!ELEMENT trajet (station)*> <!-- *	: Répétition d'un nombre quelconque d'occurrences -->
+<!ATTLIST trajet id ID #REQUIRED> <!-- #REQUIRED : L'attribut est obligatoire et il n'a pas de valeur par défaut. -->
+<!ATTLIST trajet direction (1 | 0) #REQUIRED> <!-- #REQUIRED : L'attribut est obligatoire et il n'a pas de valeur par défaut. -->
