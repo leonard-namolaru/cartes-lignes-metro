@@ -21,7 +21,7 @@ Le but de ce projet est de convertir par un programme en Python, au format XML, 
 - Pour chaque station, la liste des autres lignes de métro qui s’y arrêtent est affichée.
 
 #### Exécution
-Commandes qui doivent être exécutées dans l'invite de commande afin d'utiliser les fichiers de projet :
+Commandes qui doivent être exécutées dans l'invite de commande afin d'utiliser les fichiers du projet :
 
 -  **Script python:** *extracteur.py* (l'exécution du programme prend du temps)
 ````
